@@ -53,8 +53,8 @@ We gather information on the best model, metrics and cross validaition compariso
 ## Step 5 - AWS Lambda + S3 + API Gateway
 After we have gathered our preferred results in the desired format (predictions in csv, model information in txt file). We run a script in lambda function which is triggered by running the link - 'https://300i0o6rxg.execute-api.us-east-1.amazonaws.com/AssignmentGroupB10' which is able to pull the latest txt file, and the latest csv file, compress them into zip and download them on any local machine that runs the link. This is enabled by additionally setting an AWS API gateway integrated with the lambda function on a HTTP protocol. 
 
-## Additonal notes
-1. Apart from the above mentioned services we also use *IAM* to set permissions to allow for integrations that makes the end to end ML possible
+## Additonal note
+Apart from the above mentioned services we also use *IAM* to set permissions to allow for integrations that makes the end to end ML possible and *CloudWatch* to monitor logs when encoutnered with errors
 
 # About Data
 
