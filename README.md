@@ -39,4 +39,53 @@ b. Brief description of the model
 Created a S3 bucket with three folders
 1. mode-bilding/ :- For training data that would be useful for model building, training and evaluation. Note: The names of the files should be as is, 'train.csv', 'features.csv', 'stores.csv'. Any updated training process (re-training) would involve re-uploading the updated files, with the same name and the same schema
 2. to-predict/ :- The necessary predictions required, the name of the file 'test.csv' will contain the same name and schema
-3. output/:- This is where the model completes the pred
+3. output/ :- This is where the model completes the predictions, example: 'output_2023-03-14-19-58-24.txt','predictions_2023-03-14-19-58-24.csv'. This is empty at the beginning of the ML lifecycle and only gets updated once the model completes prediction
+
+## Step 2 - Running the AWS Sagemaker, Processing & training
+Leveraging the training data, post processing we train the model on the processed training set. While there are placeholders to run KNN, ExtraTreeRegressor, RandomForestRegressor, SVM, neural networks, lasso and ridge regression; we currently go forward with LightGBM (Light Gradient Boosting Machine) model. This part is focused until before 'Test' header in the sagemaker notebook file, that is run via a Sagemaker notebook instance
+
+## Step 3 - AWS Sagemaker, Predictions
+This is where we run the code post 'Test' header to pre-process the test.csv data to gather predictions of weekly sales on future dates
+
+## Step 4 - AWS Sagemaker + S3
+We gather information on the best model, metrics and cross validaition comparison and store the information in a text file. Then we also go ahead and save the predictions csv as predicitons_{current_date,current_time}.csv into the output folder we mentioned in step 1. Now the output folder has 2 files (in case of no earlier predictions)
+
+## Step 5 - AWS Lambda + S3 + API Gateway
+After we have gathered our preferred results in the desired format (predictions in csv, model information in txt file). We run a script in lambda function which is triggered by running the link - 'https://300i0o6rxg.execute-api.us-east-1.amazonaws.com/AssignmentGroupB10' which is able to pull the latest txt file, and the latest csv file, compress them into zip and download them on any local machine that runs the link. This is enabled by additionally setting an AWS API gateway integrated with the lambda function on a HTTP protocol. 
+
+## Additonal notes
+1. Apart from the above mentioned services we also use *IAM* to set permissions to allow for integrations that makes the end to end ML possible
+
+# About Data
+
+## stores.csv
+This file contains anonymized information about the 45 stores, indicating the type and size of store.
+
+## train.csv
+
+This is the historical training data, which covers to 2010-02-05 to 2012-11-01. Within this file you will find the following fields:
+
+Store - the store number
+Dept - the department number
+Date - the week
+Weekly_Sales -  sales for the given department in the given store
+IsHoliday - whether the week is a special holiday week
+test.csv
+
+This file is identical to train.csv, except we have withheld the weekly sales. You must predict the sales for each triplet of store, department, and date in this file.
+
+## features.csv
+
+This file contains additional data related to the store, department, and regional activity for the given dates. It contains the following fields:
+
+Store - the store number
+Date - the week
+Temperature - average temperature in the region
+Fuel_Price - cost of fuel in the region
+MarkDown1-5 - anonymized data related to promotional markdowns that Walmart is running. MarkDown data is only available after Nov 2011, and is not available for all stores all the time. Any missing value is marked with an NA.
+CPI - the consumer price index
+Unemployment - the unemployment rate
+IsHoliday - whether the week is a special holiday week
+
+# About Walmart
+Walmart operates as a large-scale retail corporation that sources products from manufacturers and distributes them to its brick-and-mortar stores and e-commerce platform. 
